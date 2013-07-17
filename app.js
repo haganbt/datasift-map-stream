@@ -74,8 +74,8 @@ app.post('/data', function (req, res) {
 		// Interaction properties
 		var userName = '';
 		var avatar = '';
-		if(body[i].interaction.author !== undefined){
-			userName = body[i].interaction.author.name; // Not present for Bitly data
+		if(body[i].interaction.author !== undefined){ // Not present for Bitly data
+			userName = body[i].interaction.author.name; 
 			avatar = body[i].interaction.author.avatar; 
 		}
 			
