@@ -10,7 +10,6 @@ Map DataSift data using Google maps via DataSift Push delivery.
 	
 TODO: 
 *  Config for server host and port
-*  Support for Bitly data
 *  Data type icons
-*  UI controls for GEO only data
+*  refactor socket emit as a method
 	

@@ -52,7 +52,6 @@
   });
   
   var failedLookUps = 0;
-  
   var positive = 0;
   var negative = 0;
 
@@ -65,24 +64,35 @@ app.post('/data', function (req, res) {
 
  	// Each interaction
   	for(i in body) {
-  		
-		logger.debug('Processing interaction..');	 
-	 	var tweet = body[i].twitter;
-	 
+
+  		// Supported data types
+		if(body[i].interaction.type !== 'twitter' && body[i].interaction.type !== 'bitly')
+			continue;
+			
+		logger.debug('Processing interaction....');	 
 	  	++interactionCounter;
 
 		// Interaction properties
-		var userName = '';
-		var avatar = '';
+		var interactionType = body[i].interaction.type;
+		var userName = 'Unknown';
+		var avatar = 'Unknown';
+		var content = '';
+		
+		
+		// Author
 		if(body[i].interaction.author !== undefined){ // Not present for Bitly data
 			userName = body[i].interaction.author.name; 
 			avatar = body[i].interaction.author.avatar; 
 		}
-			
-			
-		var content = body[i].interaction.content;
 		
-		var interactionType = body[i].interaction.type;
+		// Content	
+		if(interactionType == 'bitly'){	
+			content = body[i].bitly.domain;
+			avatar = '/images/bitly.png'; 
+		} else {
+			content = body[i].interaction.content;
+		}
+
 
 		// Sentiment
 		if(body[i].salience !== undefined && body[i].salience.content !== undefined && body[i].salience.content.sentiment !== undefined){
@@ -101,15 +111,15 @@ app.post('/data', function (req, res) {
         score = calculateRG(positive, negative);
         console.log('Positive - ' + score.positive + ' Negative ' + score.negative);
 
-		
 		// GEO Enabled?
-		if(body[i].interaction !== undefined && body[i].interaction.geo !== undefined && body[i].interaction.latitude !== undefined && body[i].interaction.longitude !== undefined){
+		if(body[i].interaction !== undefined && body[i].interaction.geo !== undefined && body[i].interaction.geo.latitude !== undefined && body[i].interaction.geo.longitude !== undefined){
+
 			if(websocket !== null) {
-            	websocket.emit('interaction', { 
+            	websocket.emit('tweet', { 
             		user : userName , 
             		text: content, 
-            		lat: body[i].interaction.latitude ,
-            		lon: body[i].interaction.longitude ,
+            		lat: body[i].interaction.geo.latitude,
+            		lon: body[i].interaction.geo.longitude,
                     profileImage : avatar,
 					count : interactionCounter, 
                     failedLookUps: failedLookUps,
@@ -119,25 +129,22 @@ app.post('/data', function (req, res) {
 				});
         	}   
 		
-		// No GEO - Attempt location lookup	
-		} else {
-			
-			// Supported data types
-			if(interactionType !== 'twitter' && interactionType !== 'bitly')
-				continue;
-			
+
+		} else { // No GEO - Attempt location lookup	
+
+
 			// Pick a location field based the data type
 			var locationProp = null;
 			
 			if(interactionType === 'twitter' && body[i].twitter.user !== undefined && body[i].twitter.user.location !== undefined){
 				locationProp = body[i].twitter.user.location;
+				logger.debug('Extracted TWITTER location name:' + locationProp);
 			}
 			
-			if(interactionType === 'bitly' && body[i].bitly.geo_city){
-				locationProp = body[i].bitly.geo_city;
-			}
-			
-			
+			if(interactionType === 'bitly' && body[i].bitly.geo_city !== undefined){
+				locationProp = body[i].bitly.geo_city + ',' + body[i].bitly.geo_country;
+				logger.debug('Extracted BITLY location name:' + locationProp);
+			}			
 						
 	        geocoder.geocode(locationProp, function(err, geodata) {
 	            if(!err) {
@@ -147,7 +154,7 @@ app.post('/data', function (req, res) {
 	                                 ' Lon :' + geodata.lon);
 	                                 
 		        	if(websocket !== null) {
-		            	websocket.emit('interaction', { 
+		            	websocket.emit('tweet', { 
 		            		user : userName , 
 		            		text: content, 
 		            		lat: geodata.lat ,
@@ -162,8 +169,8 @@ app.post('/data', function (req, res) {
 		        	} 
  
 	            } else {
-	                logger.debug('Could not resolve location for ' + tweet.user.location 
-	                                           + ' error was this %j', err);
+	                logger.debug('Could not resolve location for ' + locationProp 
+	                                           + " error was this %j", err);
 	                failedLookUps++;
 	        	}
 	       });

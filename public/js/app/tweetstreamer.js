@@ -13,7 +13,7 @@
     
     $(document).ready(function() {
         var socket = io.connect('http://ec2-54-216-159-184.eu-west-1.compute.amazonaws.com/');
-        socket.on('interaction', function (tweet) {
+        socket.on('tweet', function (tweet) {
 
             var tweetLatLon = new google.maps.LatLng(tweet.lat, tweet.lon);     
             
@@ -47,7 +47,7 @@
             $('#failed-lookups').html(tweet.failedLookUps);         
 	        
             emotion = 'rgb(' + tweet.negative + ', ' + tweet.positive + ', ' + '0)'; 
-            console.log('emotion is ' + emotion);
+            //console.log('emotion is ' + emotion);
              
             $('#page-body').css({'background-color': emotion});
 
