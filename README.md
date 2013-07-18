@@ -5,7 +5,7 @@ A port of https://github.com/amithn/tweet-plotter for DataSift.
 	
 
 **Description**
-Plot DataSift data to a Goolge map in real-time using a DataSift HTTP POST Push endpoint.
+Plot DataSift data and sentiment to a Goolge map in real-time using a DataSift HTTP POST Push endpoint.
 
 Currently supports Twitter and Bit.ly data.
 
