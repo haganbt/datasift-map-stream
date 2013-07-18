@@ -14,7 +14,9 @@ Currently supports Twitter and Bit.ly data.
  * NPM install
  * Edit public/js/app/tweetstreamer.js and set the websockets host
  * Start: node app.js
- * Configure a DataSift HTTP POST push destination setting the data format to be "JSON Array"
+ * Configure a DataSift HTTP POST push destination
+   * Push to the /data endpoint - http://<myhost>/data
+   * Data format set to "JSON Array"
  * Start DataSift recording or historic
 	
 	
