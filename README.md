@@ -11,17 +11,18 @@ Currently supports Twitter and Bit.ly data.
 
 
 **Usage**
- * NPM install
+ * ```NPM install```
  * Edit public/js/app/tweetstreamer.js and set the websockets host
- * Start: node app.js
+ * Start: ```node app.js```
  * Configure a DataSift HTTP POST push destination
-   * Push to the /data endpoint - http://<myhost>/data
+   * Push to the /data endpoint - http://[myhost]/data
    * Data format set to "JSON Array"
  * Start DataSift recording or historic
 	
 	
 TODO: 
-*  Config for server host and port
-*  Data type icons
-*  refactor socket emit as a method
+*  Config file for server host and port
+*  Data type icons - bitly and twitter
+*  Refactor socket emit as a reusable method
+*  add support for Instagram photos
 	
