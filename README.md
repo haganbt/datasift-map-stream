@@ -11,7 +11,7 @@ Plot DataSift data and sentiment to a Goolge map in real-time using a DataSift H
 Currently supports Twitter and Bit.ly data.
 
 
-**Usage**
+**Install and Usage**
  * ```NPM install```
  * Edit public/js/app/tweetstreamer.js and set the websockets host
  * Start: ```node app.js```
